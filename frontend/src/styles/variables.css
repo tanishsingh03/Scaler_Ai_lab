@@ -1,0 +1,45 @@
+:root {
+  /* Calendly Official Font */
+  --font-family: 'Inter', -apple-system, system-ui, sans-serif;
+
+  /* Official Brand Colors */
+  --calendly-blue: #006bff;
+  --calendly-blue-hover: #0056cc;
+  --primary-color: #006bff;
+
+  /* Accent Borders */
+  --accent-purple: #8247f5;
+
+  /* Backgrounds */
+  --bg-main: #ffffff;
+  --bg-sidebar: #ffffff;
+  --bg-gray: #f8f9fa;
+  --bg-hover: #f1f5ff;
+  
+  /* Text */
+  --text-main: #1a1a1a;
+  --text-dark: #1a1a1a;
+  --text-light: #666666;
+  --text-muted: #888888;
+  
+  /* Borders and Spacing */
+  --border-color: #e2e2e2;
+  --border-radius: 8px;
+  --border-radius-sm: 4px;
+  --border-radius-lg: 12px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.05);
+  --shadow-glow: 0 4px 12px rgba(0, 107, 255, 0.2);
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease-in-out;
+  --transition-smooth: 0.2s ease-in-out;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+}

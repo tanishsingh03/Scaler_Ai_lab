@@ -1,0 +1,265 @@
+/* -------------------------------------------------------------
+ * CORE LAYOUT
+ * ------------------------------------------------------------- */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--bg-main);
+}
+
+.calendly-sidebar {
+  width: 250px;
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--bg-sidebar);
+  flex-shrink: 0;
+  height: 100%;
+}
+
+.sidebar-top {
+  padding: 24px 20px;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--calendly-blue);
+  margin-bottom: 30px;
+  padding: 0 10px;
+}
+
+.logo-icon-blue {
+  background: var(--calendly-blue);
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.sidebar-create-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 20px;
+  border: 1px solid var(--calendly-blue);
+  background: white;
+  color: var(--calendly-blue);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: 0.2s;
+}
+
+.sidebar-create-btn:hover {
+  background: var(--bg-hover);
+}
+
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  color: var(--text-main);
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.1s;
+}
+
+.sidebar-item:hover {
+  background: var(--bg-hover);
+}
+
+.sidebar-item.active {
+  background: rgba(0, 107, 255, 0.08);
+  color: var(--calendly-blue);
+}
+
+.sidebar-bottom {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-bottom .sidebar-item {
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+/* -------------------------------------------------------------
+ * MAIN CONTENT AREA
+ * ------------------------------------------------------------- */
+.admin-main, .public-main {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-header-global {
+  display: flex;
+  justify-content: flex-end;
+  padding: 24px 40px 0 40px;
+}
+
+.top-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-light);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.avatar-circle {
+  width: 32px;
+  height: 32px;
+  background: var(--bg-hover);
+  color: var(--text-main);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.page-content {
+  padding: 20px 40px 40px 40px;
+  max-width: 1040px; /* To prevent it from stretching too wide */
+  width: 100%;
+}
+
+.events-header, .page-header {
+  margin-bottom: 24px;
+}
+
+.events-header h1, .page-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* -------------------------------------------------------------
+ * BOOKING PAGE PUBLIC WRAPPER
+ * ------------------------------------------------------------- */
+.booking-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background: var(--bg-gray);
+}
+
+.booking-card {
+  display: flex;
+  background: white;
+  width: 100%;
+  max-width: 1060px;
+  min-height: 600px;
+  border-radius: 8px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.column-left {
+  width: 35%;
+  border-right: 1px solid var(--border-color);
+  padding: 30px;
+}
+
+.column-right {
+  width: 65%;
+  padding: 30px;
+}
+
+.picker-container {
+  display: flex;
+  gap: 20px;
+}
+
+@media (max-width: 860px) {
+  .booking-card { flex-direction: column; }
+  .column-left, .column-right { width: 100%; border: none; }
+  .picker-container { flex-direction: column; }
+}
+
+.admin-container {
+  padding: 0;
+}
+
+/* -------------------------------------------------------------
+ * RESPONSIVENESS AND MOBILE
+ * ------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+  }
+  
+  .calendly-sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 20px;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .sidebar-top {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .sidebar-logo {
+    margin-bottom: 0;
+    padding: 0;
+  }
+  
+  .sidebar-create-btn {
+    width: auto;
+    margin-bottom: 0;
+    padding: 8px 16px;
+  }
+  
+  .sidebar-links, .sidebar-bottom {
+    display: none; /* Hide links under hamburger normally, simulated simple here */
+  }
+
+  .top-header-global {
+    padding: 15px 20px 0;
+  }
+  
+  .page-content {
+    padding: 20px;
+  }
+}
