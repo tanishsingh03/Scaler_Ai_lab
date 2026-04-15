@@ -1,0 +1,69 @@
+// This is your Prisma schema file
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(uuid())
+  name         String
+  username     String         @unique
+  email        String         @unique
+  timezone     String         @default("Asia/Kolkata")
+  createdAt    DateTime       @default(now())
+  eventTypes   EventType[]
+  availability Availability[]
+}
+
+model EventType {
+  id            String    @id @default(uuid())
+  userId        String
+  title         String
+  slug          String
+  duration      Int       // in minutes
+  description   String?
+  bufferBefore  Int       @default(0) // in minutes
+  bufferAfter   Int       @default(0) // in minutes
+  active        Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookings      Booking[]
+
+  @@unique([userId, slug])
+}
+
+model Booking {
+  id            String    @id @default(uuid())
+  eventTypeId   String
+  inviteeName   String
+  inviteeEmail  String
+  notes         String?
+  guestEmails   String?   // Comma-separated guest emails
+  startTime     DateTime
+  endTime       DateTime
+  status        BookingStatus @default(SCHEDULED)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  eventType     EventType @relation(fields: [eventTypeId], references: [id], onDelete: Cascade)
+}
+
+model Availability {
+  id        String   @id @default(uuid())
+  userId    String
+  dayOfWeek Int      // 0 = Sunday, 1 = Monday ... 6 = Saturday
+  startTime String   // "09:00"
+  endTime   String   // "17:00"
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum BookingStatus {
+  SCHEDULED
+  CANCELED
+}

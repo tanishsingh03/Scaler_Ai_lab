@@ -11,13 +11,25 @@ import {
   isSameDay, 
   addDays, 
   isBefore,
-  startOfToday
+  startOfToday,
+  getDay,
 } from 'date-fns';
 
-const CalendarView = ({ onDateSelect }) => {
+// availableDays: array of day-of-week numbers (0=Sun … 6=Sat) or null (all days allowed)
+const CalendarView = ({ onDateSelect, availableDays }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(null);
   const today = startOfToday();
+
+  const isDateAvailable = (date) => {
+    if (isBefore(date, today)) return false;
+    if (!isSameMonth(date, currentMonth)) return false;
+    // If availability data loaded, respect it; otherwise allow all weekdays
+    if (availableDays !== null && availableDays !== undefined) {
+      return availableDays.includes(getDay(date));
+    }
+    return true; // fallback: allow all (backend not yet loaded)
+  };
 
   const renderHeader = () => (
     <div className="calendar-header">
@@ -48,24 +60,36 @@ const CalendarView = ({ onDateSelect }) => {
       for (let i = 0; i < 7; i++) {
         const formattedDate = format(day, 'd');
         const cloneDay = day;
-        
-        // Logic: Disable if in past OR not in current month
-        const isDisabled = !isSameMonth(day, monthStart) || isBefore(day, today);
-        const isSelected = isSameDay(day, selectedDate);
+
+        const available = isDateAvailable(day);
+        const isSelected = selectedDate && isSameDay(day, selectedDate);
+        const isOutside = !isSameMonth(day, monthStart);
+
+        let cellClass = 'cell disabled';
+        if (!isOutside && available) {
+          cellClass = isSelected ? 'cell selected' : 'cell available';
+        } else if (isOutside) {
+          cellClass = 'cell outside';
+        }
 
         days.push(
           <div
-            key={day}
-            className={`cell ${isDisabled ? 'disabled' : isSelected ? 'selected' : 'available'}`}
-            onClick={() => !isDisabled && (setSelectedDate(cloneDay), onDateSelect(cloneDay))}
+            key={day.toString()}
+            className={cellClass}
+            onClick={() => {
+              if (!isOutside && available) {
+                setSelectedDate(cloneDay);
+                onDateSelect(cloneDay);
+              }
+            }}
           >
             <span className="number">{formattedDate}</span>
-            {(!isDisabled && !isSelected) && <div className="dot" />}
+            {(!isOutside && available && !isSelected) && <div className="dot" />}
           </div>
         );
         day = addDays(day, 1);
       }
-      rows.push(<div className="row" key={day}>{days}</div>);
+      rows.push(<div className="row" key={day.toString()}>{days}</div>);
       days = [];
     }
     return <div className="body">{rows}</div>;

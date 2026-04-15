@@ -1,16 +1,39 @@
-
 import React from 'react';
 
-const EventInfo = ({ title, duration, date, time }) => (
+const EventInfo = ({ title, duration, description, hostName, date, time, timezone }) => (
   <div className="event-info-sidebar">
-    <p className="host-name">Tanish Singh</p>
-    <h1 className="event-title">{title}</h1>
-    <div className="info-details">
-      <span>🕒 {duration}</span>
-      {date && <span>📅 {date.toDateString()}</span>}
-      {time && <span>⏰ {time}</span>}
-      <span>🌎 India Standard Time</span>
+    <div className="host-avatar">
+      {(hostName || 'T').charAt(0).toUpperCase()}
     </div>
+    <p className="host-name">{hostName || 'Tanish Singh'}</p>
+    <h1 className="event-title">{title}</h1>
+
+    <div className="info-details">
+      <div className="info-row">
+        <span className="info-icon">🕒</span>
+        <span>{duration}</span>
+      </div>
+      {date && (
+        <div className="info-row">
+          <span className="info-icon">📅</span>
+          <span>{date.toDateString()}</span>
+        </div>
+      )}
+      {time && (
+        <div className="info-row">
+          <span className="info-icon">⏰</span>
+          <span>{time}</span>
+        </div>
+      )}
+      <div className="info-row">
+        <span className="info-icon">🌎</span>
+        <span>{timezone || 'India Standard Time'}</span>
+      </div>
+    </div>
+
+    {description && (
+      <p className="event-description">{description}</p>
+    )}
   </div>
 );
 
