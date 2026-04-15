@@ -1,13 +1,18 @@
 const nodemailer = require('nodemailer');
 
-// Configure transporter from environment variables
-// Supports Mailtrap, Gmail, or any SMTP provider
+// Nodemailer transporter using Gmail SMTP (100% free, no third party)
+// Requires: A Gmail account + an App Password (not your regular password)
+// Setup: myaccount.google.com/apppasswords → Create → Copy the 16-char password
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'sandbox.smtp.mailtrap.io',
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
   port: parseInt(process.env.SMTP_PORT || '587'),
+  secure: false,          // use STARTTLS (port 587), NOT SSL (port 465)
   auth: {
     user: process.env.SMTP_USER || '',
     pass: process.env.SMTP_PASS || '',
+  },
+  tls: {
+    rejectUnauthorized: false, // allows self-signed certs in local dev
   },
 });
 
