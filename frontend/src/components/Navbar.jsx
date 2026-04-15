@@ -21,24 +21,17 @@ const Navbar = () => {
         </button>
 
         <div className="sidebar-links">
-          <NavLink
-            to="/"
-            end
-            className={({ isActive }) => isActive ? 'sidebar-item active' : 'sidebar-item'}
-          >
+          <NavLink to="/" end className={({ isActive }) => isActive ? 'sidebar-item active' : 'sidebar-item'}>
             <span className="icon">🔗</span> Scheduling
           </NavLink>
-          <NavLink
-            to="/meetings"
-            className={({ isActive }) => isActive ? 'sidebar-item active' : 'sidebar-item'}
-          >
+          <NavLink to="/meetings" className={({ isActive }) => isActive ? 'sidebar-item active' : 'sidebar-item'}>
             <span className="icon">📅</span> Meetings
           </NavLink>
-          <NavLink
-            to="/availability"
-            className={({ isActive }) => isActive ? 'sidebar-item active' : 'sidebar-item'}
-          >
+          <NavLink to="/availability" className={({ isActive }) => isActive ? 'sidebar-item active' : 'sidebar-item'}>
             <span className="icon">⏱️</span> Availability
+          </NavLink>
+          <NavLink to="/date-overrides" className={({ isActive }) => isActive ? 'sidebar-item active' : 'sidebar-item'}>
+            <span className="icon">📆</span> Date Overrides
           </NavLink>
         </div>
       </div>

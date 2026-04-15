@@ -5,10 +5,12 @@ require('dotenv').config();
 const eventTypesRouter = require('./routes/eventTypes');
 const availabilityRouter = require('./routes/availability');
 const bookingsRouter = require('./routes/bookings');
+const questionsRouter = require('./routes/questions');
+const dateOverridesRouter = require('./routes/dateOverrides');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // Middleware
 app.use(cors({
@@ -26,6 +28,8 @@ app.get('/api/health', (req, res) => {
 app.use('/api/event-types', eventTypesRouter);
 app.use('/api/availability', availabilityRouter);
 app.use('/api/bookings', bookingsRouter);
+app.use('/api/questions', questionsRouter);
+app.use('/api/date-overrides', dateOverridesRouter);
 
 // 404 handler
 app.use((req, res) => {

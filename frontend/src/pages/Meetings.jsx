@@ -2,11 +2,6 @@ import React, { useState, useEffect } from 'react';
 import '../styles/layout.css';
 import { getBookings, cancelBooking } from '../services/api';
 
-const MOCK = [
-  { id: '1', inviteeName: 'John Doe', inviteeEmail: 'john@example.com', startTime: new Date(Date.now() + 3*24*3600*1000).toISOString(), eventType: { title: '30 Minute Meeting', duration: 30 }, status: 'SCHEDULED' },
-  { id: '2', inviteeName: 'Jane Smith', inviteeEmail: 'jane@example.com', startTime: new Date(Date.now() - 5*24*3600*1000).toISOString(), eventType: { title: '15 Minute Meeting', duration: 15 }, status: 'SCHEDULED' },
-];
-
 const Meetings = () => {
   const [tab, setTab] = useState('upcoming');
   const [meetings, setMeetings] = useState([]);
@@ -15,16 +10,13 @@ const Meetings = () => {
 
   const fetchMeetings = async (filter) => {
     setLoading(true);
+    setError(null);
     try {
       const data = await getBookings(filter);
       setMeetings(data);
     } catch {
-      // Fallback to mock
-      const now = new Date();
-      setMeetings(MOCK.filter(m => filter === 'upcoming'
-        ? new Date(m.startTime) >= now
-        : new Date(m.startTime) < now));
-      setError('Showing demo data. Start the backend to see real meetings.');
+      setMeetings([]);
+      setError('Could not connect to backend. Is the server running?');
     } finally {
       setLoading(false);
     }
@@ -39,6 +31,14 @@ const Meetings = () => {
       setMeetings(prev => prev.filter(m => m.id !== id));
     } catch {
       alert('Failed to cancel. Is the backend running?');
+    }
+  };
+
+  const handleReschedule = (m) => {
+    if (m.rescheduleToken) {
+      window.open(`/reschedule/${m.rescheduleToken}`, '_blank');
+    } else {
+      alert('Reschedule link not available for this booking.');
     }
   };
 
@@ -57,9 +57,6 @@ const Meetings = () => {
     <div className="admin-container">
       <header className="page-header" style={{ marginBottom: 30, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}>
         <h1 style={{ fontSize: 24 }}>Meetings</h1>
-        <button className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 4 }}>
-          <span>⬇</span> Export
-        </button>
       </header>
 
       <div className="tabs" style={{ marginBottom: 0 }}>
@@ -73,32 +70,47 @@ const Meetings = () => {
       <div style={{ background: 'white', border: '1px solid var(--border-color)', borderTop: 'none', borderRadius: '0 0 8px 8px', minHeight: 400 }}>
         {error && <p style={{ padding: '12px 30px', color: '#e11d48', fontSize: 13 }}>⚠ {error}</p>}
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 3fr 100px', padding: '15px 30px', borderBottom: '1px solid var(--border-color)', color: 'var(--text-light)', fontSize: 12, fontWeight: 'bold', textTransform: 'uppercase' }}>
-          <div>Date & Time</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 3fr 180px', padding: '15px 30px', borderBottom: '1px solid var(--border-color)', color: 'var(--text-light)', fontSize: 12, fontWeight: 'bold', textTransform: 'uppercase' }}>
+          <div>Date &amp; Time</div>
           <div>Meeting Details</div>
-          <div>Action</div>
+          <div>Actions</div>
         </div>
 
         {loading ? (
           <div style={{ padding: '80px 0', textAlign: 'center', color: 'var(--text-light)' }}>Loading...</div>
         ) : meetings.length > 0 ? (
           meetings.map(m => (
-            <div key={m.id} style={{ display: 'grid', gridTemplateColumns: '1.5fr 3fr 100px', padding: '20px 30px', borderBottom: '1px solid var(--border-color)', alignItems: 'center' }}>
+            <div key={m.id} style={{ display: 'grid', gridTemplateColumns: '1.5fr 3fr 180px', padding: '20px 30px', borderBottom: '1px solid var(--border-color)', alignItems: 'center' }}>
               <div>
                 <span style={{ display: 'block', fontWeight: 500, fontSize: 14, marginBottom: 4 }}>{formatDate(m.startTime)}</span>
                 <span style={{ color: 'var(--text-light)', fontSize: 13 }}>{formatTime(m.startTime, m.eventType?.duration)}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 15 }}>
-                <div style={{ width: 4, height: 40, background: 'var(--calendly-blue)', borderRadius: 4 }}></div>
+                <div style={{ width: 4, height: 40, background: 'var(--calendly-blue)', borderRadius: 4 }} />
                 <div>
                   <h4 style={{ margin: '0 0 4px', fontSize: 15 }}>{m.inviteeName}</h4>
-                  <p style={{ margin: 0, color: 'var(--text-light)', fontSize: 13 }}>Event: <strong>{m.eventType?.title}</strong></p>
+                  <p style={{ margin: '0 0 2px', color: 'var(--text-light)', fontSize: 13 }}>Event: <strong>{m.eventType?.title}</strong></p>
+                  <p style={{ margin: 0, color: 'var(--text-light)', fontSize: 12 }}>{m.inviteeEmail}</p>
                 </div>
               </div>
-              <div>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {tab === 'upcoming' && (
-                  <button className="btn-secondary" style={{ padding: '6px 12px', fontSize: 13, borderRadius: 6 }}
-                    onClick={() => handleCancel(m.id)}>Cancel</button>
+                  <>
+                    <button
+                      className="btn-primary"
+                      style={{ padding: '6px 12px', fontSize: 12, borderRadius: 6, background: 'var(--bg-hover)', color: 'var(--calendly-blue)', border: '1px solid var(--calendly-blue)' }}
+                      onClick={() => handleReschedule(m)}
+                    >
+                      🔄 Reschedule
+                    </button>
+                    <button
+                      className="btn-secondary"
+                      style={{ padding: '6px 12px', fontSize: 12, borderRadius: 6, border: '1px solid #e11d48', color: '#e11d48' }}
+                      onClick={() => handleCancel(m.id)}
+                    >
+                      Cancel
+                    </button>
+                  </>
                 )}
               </div>
             </div>

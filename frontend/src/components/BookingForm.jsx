@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { createBooking } from "../services/api";
+import { createBooking, getQuestions } from "../services/api";
 import { format } from "date-fns";
 
 function BookingForm({
@@ -18,9 +18,25 @@ function BookingForm({
   const [guests, setGuests] = useState("");
   const [showGuests, setShowGuests] = useState(false);
   const [notes, setNotes] = useState("");
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState({}); // { questionId: answer }
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
   const navigate = useNavigate();
+
+  // Load custom questions for this event type
+  useEffect(() => {
+    if (!eventTypeId) return;
+    getQuestions(eventTypeId)
+      .then(data => {
+        setQuestions(data);
+        // Init empty answers
+        const init = {};
+        data.forEach(q => { init[q.id] = ''; });
+        setAnswers(init);
+      })
+      .catch(() => {}); // Fail silently
+  }, [eventTypeId]);
 
   const formatTime = (time24) => {
     if (!time24) return "";
@@ -35,8 +51,21 @@ function BookingForm({
     setSubmitting(true);
     setErrorMsg(null);
 
+    // Validate required custom questions
+    for (const q of questions) {
+      if (q.required && !answers[q.id]?.trim()) {
+        setErrorMsg(`"${q.label}" is a required field.`);
+        setSubmitting(false);
+        return;
+      }
+    }
+
     try {
       const dateStr = format(selectedDate, "yyyy-MM-dd");
+      const answersPayload = Object.entries(answers)
+        .filter(([, answer]) => answer?.trim())
+        .map(([questionId, answer]) => ({ questionId, answer }));
+
       const booking = await createBooking({
         eventTypeId,
         inviteeName: name,
@@ -45,6 +74,7 @@ function BookingForm({
         time: selectedTime,
         notes: notes || undefined,
         guestEmails: guests || undefined,
+        answers: answersPayload,
       });
 
       navigate("/success", {
@@ -84,9 +114,7 @@ function BookingForm({
       </p>
 
       {errorMsg && (
-        <div className="booking-error">
-          ⚠ {errorMsg}
-        </div>
+        <div className="booking-error">⚠ {errorMsg}</div>
       )}
 
       <form onSubmit={handleSubmit} className="calendly-form" style={{ marginTop: 0 }}>
@@ -111,6 +139,30 @@ function BookingForm({
             required
           />
         </div>
+
+        {/* ── Custom Questions ── */}
+        {questions.map(q => (
+          <div key={q.id} className="form-group">
+            <label>
+              {q.label} {q.required && '*'}
+            </label>
+            {q.type === 'TEXTAREA' ? (
+              <textarea
+                rows="3"
+                value={answers[q.id] || ''}
+                onChange={(e) => setAnswers(prev => ({ ...prev, [q.id]: e.target.value }))}
+                placeholder={`Your answer${q.required ? '' : ' (optional)'}`}
+              />
+            ) : (
+              <input
+                type="text"
+                value={answers[q.id] || ''}
+                onChange={(e) => setAnswers(prev => ({ ...prev, [q.id]: e.target.value }))}
+                placeholder={`Your answer${q.required ? '' : ' (optional)'}`}
+              />
+            )}
+          </div>
+        ))}
 
         {!showGuests ? (
           <button
