@@ -14,7 +14,11 @@ const PORT = process.env.PORT || 5001;
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || ['http://localhost:5173', 'http://localhost:3000'],
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    // and allow all other origins dynamically to fix Vercel CORS issues
+    callback(null, true);
+  },
   credentials: true,
 }));
 app.use(express.json());
