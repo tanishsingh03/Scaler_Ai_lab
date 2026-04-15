@@ -21,7 +21,7 @@ app.use(express.json());
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Calendly Clone API is running 🚀' });
+  res.json({ status: 'OK', message: 'MeetSync API is running 🚀' });
 });
 
 // Routes

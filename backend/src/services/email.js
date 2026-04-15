@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const EMAIL_FROM = process.env.EMAIL_FROM || 'Calendly Clone <noreply@calendly-clone.com>';
+const EMAIL_FROM = process.env.EMAIL_FROM || 'MeetSync <noreply@meetsync.com>';
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 /**
@@ -64,7 +64,7 @@ async function sendBookingConfirmation(booking) {
 
         <p style="font-size: 13px; color: #888; text-align: center; margin-top: 24px;">
           If you need to cancel, please contact the host directly.<br/>
-          This email was sent by Calendly Clone.
+          This email was sent by MeetSync.
         </p>
       </div>
     `,
@@ -104,7 +104,7 @@ async function sendCancellationEmail(booking) {
 
         <p style="font-size: 13px; color: #888; text-align: center; margin-top: 24px;">
           Please reach out to the host to reschedule if needed.<br/>
-          This email was sent by Calendly Clone.
+          This email was sent by MeetSync.
         </p>
       </div>
     `,

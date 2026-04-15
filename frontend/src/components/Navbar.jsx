@@ -9,8 +9,8 @@ const Navbar = () => {
     <nav className="calendly-sidebar">
       <div className="sidebar-top">
         <div className="sidebar-logo">
-          <div className="logo-icon-blue">C</div>
-          <span className="logo-text">Calendly</span>
+          <div className="logo-icon-blue">M</div>
+          <span className="logo-text">MeetSync</span>
         </div>
 
         <button

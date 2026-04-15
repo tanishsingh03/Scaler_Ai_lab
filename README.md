@@ -1,4 +1,4 @@
-# 📅 Scheduling Platform — Calendly Clone
+# 📅 Scheduling Platform — MeetSync
 
 A full-stack scheduling/booking web application replicating Calendly's design and UX, built as an SDE Intern assignment.
 
