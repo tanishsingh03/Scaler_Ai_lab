@@ -152,8 +152,14 @@ router.get('/reschedule/:token', async (req, res, next) => {
       where: { rescheduleToken: req.params.token },
       include: {
         eventType: {
-          select: { id: true, title: true, duration: true, slug: true, bufferAfter: true },
-          include: { user: { select: { name: true, username: true, timezone: true } } },
+          select: { 
+            id: true, 
+            title: true, 
+            duration: true, 
+            slug: true, 
+            bufferAfter: true,
+            user: { select: { name: true, username: true, timezone: true } }
+          },
         },
       },
     });
