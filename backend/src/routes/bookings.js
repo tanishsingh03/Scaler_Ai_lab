@@ -62,6 +62,18 @@ router.get('/', async (req, res, next) => {
       orderBy: { startTime: 'asc' },
     });
 
+    // Auto-fix any older bookings (like seeded ones) that might have a null rescheduleToken
+    const crypto = require('crypto');
+    for (let b of bookings) {
+      if (!b.rescheduleToken) {
+        b.rescheduleToken = crypto.randomUUID();
+        await prisma.booking.update({
+          where: { id: b.id },
+          data: { rescheduleToken: b.rescheduleToken },
+        });
+      }
+    }
+
     res.json(bookings);
   } catch (err) {
     next(err);
